@@ -7,7 +7,10 @@ import { authHandle } from "../../utils/firebase";
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import { BorderLeft } from "@mui/icons-material";
+import { Router } from 'next/router';
+
+import Link from 'next/link';
+
 
 const Dashboard = () => { 
     //const [ user ] = useAuthState( authHandle );
@@ -24,22 +27,24 @@ const Dashboard = () => {
     const exams = [{
                     name: "Midterm",
                     desc: "This is a midterm exam",
-                    start:  Date(10-6-2023),
-                    end: Date(1-7-2023),
+                    start:  Date(10-6-2023).substring(0,15),
+                    end: Date(1-7-2023).substring(0,15),
                 },
                 {
                     name: "Midterm",
                     desc: "This is a midterm exam",
-                    start:  Date(10-6-2023),
-                    end: Date(1-7-2023),
+                    start:  Date(10-6-2023).substring(0,15),
+                    end: Date(1-7-2023).substring(0,15),
                 },
                 {
                     name: "Midterm",
                     desc: "This is a midterm exam",
-                    start:  Date(10-6-2023),
-                    end: Date(1-7-2023),
+                    start:  Date(10-6-2023).substring(0,15),
+                    end: Date(1-7-2023).substring(0,15),
                 },
         ];
+
+
 
     return (
         <Box sx={{width: "200vh"}}>
@@ -48,15 +53,22 @@ const Dashboard = () => {
             <Grid item xs={12} component={Paper} style={ { display: "flex", flexDirection: "column", alignItems: "start", marginBottom: "5"} }>
             <h1>Hello! {user.name}</h1>
             <Stack spacing={3} direction="row">
-                <Button
+            <Link
+                href={{
+                    pathname: '/faculty/myschedule',
+                    query: user 
+                }}
+                >
+                <a><Button
                         type="button"
                         href="faculty/myschedule"
                         variant="contained"
                         color="primary"
                         style={ { marginBottom: "18px"}}
+                        
                     >
                         View My Schedule
-                    </Button>
+                    </Button></a></Link>
                 <Button
                         type="button"
                         href="faculty/myexams"
@@ -78,14 +90,20 @@ const Dashboard = () => {
                     key={value.name}
                     disableGutters
                     >
+                        <Link
+                href={{
+                    pathname: '/faculty/slotselection',
+                    query: value 
+                }}
+                ><a style={{textDecoration: "none",color:"black"}}>
                     <ListItemText>
-                        <Grid>
                         <strong>{value.name}</strong>
                         <Typography>{value.desc}</Typography>
                         <Typography>Strat Date: {value.start}</Typography>
                         <Typography>End Date: {value.end}</Typography>
-                        </Grid>
                     </ListItemText>
+                    </a>
+                    </Link>
                     </ListItem>
                 ))}
                 </List>

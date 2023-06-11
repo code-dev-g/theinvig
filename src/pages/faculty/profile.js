@@ -21,26 +21,6 @@ export default function schedule() {
     //     );
     // }
     // console.log( user.uid );
-    const user = {name:"Dharshita"}
-    const exams = [{
-                    name: "Midterm",
-                    desc: "This is a midterm exam",
-                    start:  Date(10-6-2023),
-                    end: Date(1-7-2023),
-                },
-                {
-                    name: "Midterm",
-                    desc: "This is a midterm exam",
-                    start:  Date(10-6-2023),
-                    end: Date(1-7-2023),
-                },
-                {
-                    name: "Midterm",
-                    desc: "This is a midterm exam",
-                    start:  Date(10-6-2023),
-                    end: Date(1-7-2023),
-                },
-        ];
 
     return (
         <Box sx={{width: "200vh"}}>

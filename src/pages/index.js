@@ -27,7 +27,7 @@ export default function Home() {
           </Grid>
           <Grid item xs={6} md={4}>
           <Box sx={{ textAlign: "center", fontWeight: "bold"}}>
-            <Button href = "/signin" variant="contained" fullWidth>Admin Signin</Button>
+            <Button href = "/adminsignin" variant="contained" fullWidth>Admin Signin</Button>
           </Box>
           </Grid>
           <Grid item xs={6} md={4}>
@@ -37,7 +37,7 @@ export default function Home() {
           </Grid>
           <Grid item xs={6} md={4}>
           <Box sx={{ textAlign: "center", fontWeight: "bold"}}>
-            <Button href = "/signin" variant="contained" fullWidth>Login Signin</Button>
+            <Button href = "/facultysignin" variant="contained" fullWidth>Faculty Signin</Button>
           </Box>
           </Grid>
           <Grid item xs={6} md={4}>

@@ -20,20 +20,11 @@ import { doc, getDoc } from "firebase/firestore";
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
-
   const formik = useFormik( {
     initialValues: {
         email: "",
         password: "",
-        type: "faculty",
+        type: "admin",
     },
     validationSchema: Yup.object( {
         email: Yup.string()
@@ -60,7 +51,9 @@ export default function SignInSide() {
             if (docSnap.exists()) {
                 console.log( "Document data:", docSnap.data() );
                 if ( docSnap.data().type === type ) {
-                        router.push( '/faculty' );
+                    if ( type === "admin" ) {
+                        router.push( '/admin' );
+                    }
                 }
                 else {
                     signOut( authHandle );
@@ -102,7 +95,7 @@ export default function SignInSide() {
         <Grid item xs={12} sm={8} md={7} component={Paper} elevation={3} square>
         <Box>
             <form onSubmit={ formik.handleSubmit } style={ { display: "flex", flexDirection: "column", alignItems: "center"} }>
-                <Typography variant="h3" style={ { marginTop: "160px",marginBottom: "16px"} }>Faculty Sign In</Typography>
+                <Typography variant="h3" style={ { marginTop: "160px",marginBottom: "16px"} }>Admin Sign In</Typography>
                 <TextField
                     id="email"
                     name="email"

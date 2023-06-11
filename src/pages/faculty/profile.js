@@ -1,6 +1,10 @@
 import { React } from "react";
 import { useRouter } from 'next/router'
-import {Box,List,Grid, Paper,Typography, Button, Stack} from "@mui/material";
+import {Box,Grid, Paper,Typography, Button, Stack} from "@mui/material";
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import { CardActionArea } from '@mui/material';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { authHandle } from "../../utils/firebase";
 
@@ -9,9 +13,9 @@ import ListItem from '@mui/material/ListItem';
 
 export default function schedule() {
     const router = useRouter();
-    const data = router.query;
+    // const data = router.query;
     
-        //const [ user ] = useAuthState( authHandle );
+    //     const [ user ] = useAuthState( authHandle );
     // console.log(user)
     // if ( user == null ) { 
     //     return (
@@ -21,74 +25,52 @@ export default function schedule() {
     //     );
     // }
     // console.log( user.uid );
-
+    const data = {name: "Charles",mail: "test@gmail.com"};
     return (
         <Box sx={{width: "200vh"}}>
-            <Typography variant="h3" sx={{fontWeight: "bold" ,margin: "2rem 0rem", }}>Exam List</Typography>
+            <h1>Faculty Profile</h1>
             <Grid container spacing={3}>
-            <Grid item xs={12} component={Paper} style={ { display: "flex", flexDirection: "column", marginBottom: "5"}}>
-            <h2 style={{color: "green"}}>Current Exam</h2>
-            <Grid>
-            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {exams.map((value) => (
-                    <ListItem
-                    key={value.name}
-                    disableGutters
-                    >
-                    <ListItemText>
-                        <strong>{value.name}</strong>
-                        <Typography>{value.desc}</Typography>
-                        <Typography>Strat Date: {value.start}</Typography>
-                        <Typography>End Date: {value.end}</Typography>
-                    </ListItemText>
-                    </ListItem>
-                ))}
-                </List>
+            <Grid item xs={12} style={ {display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "15"}}>
+            <img
+                height="300px"
+                width={'auto'}
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Charles-Leclerc.jpg/330px-Charles-Leclerc.jpg"
+                alt={data.name}
+                />
+                <Typography gutterBottom variant="h5" component="div">
+                    {data.name}
+                </Typography>
             </Grid>
+            <Grid item xs={12} component={Paper} spacing={2} style={ {display: "flex", flexDirection: "column", alignItems: "unset", marginBottom: "15"}}>
+            
+            <Typography gutterBottom variant="h6" component="div">
+                Email: 
+            <Typography component="div">
+                {data.mail}
+            </Typography>
+            </Typography>
+            
+            <Typography gutterBottom variant="h6" component="div">
+                Email: 
+            <Typography component="div">
+                {data.mail}
+            </Typography>
+            </Typography>
+
+            <Typography gutterBottom variant="h6" component="div">
+                Email: 
+            <Typography component="div">
+                {data.mail}
+            </Typography>
+            </Typography>
+
+            <Typography gutterBottom variant="h6" component="div">
+                Email: 
+            <Typography component="div">
+                {data.mail}
+            </Typography>
+            </Typography>
             </Grid>
-            <Grid item rowSpacing={45}></Grid>
-            <Grid item xs={12} component={Paper} style={ { display: "flex", flexDirection: "column", marginBottom: "5"}}>
-            <h2 style={{color: "red"}}>Upcomming Exam</h2>
-            <Grid>
-            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {exams.map((value) => (
-                    <ListItem
-                    key={value.name}
-                    disableGutters
-                    >
-                    <ListItemText>
-                        <strong>{value.name}</strong>
-                        <Typography>{value.desc}</Typography>
-                        <Typography>Strat Date: {value.start}</Typography>
-                        <Typography>End Date: {value.end}</Typography>
-                    </ListItemText>
-                    </ListItem>
-                ))}
-                </List>
-            </Grid>
-            </Grid>
-            <Grid item rowSpacing={45}></Grid>
-            <Grid item xs={12} component={Paper} style={ { display: "flex", flexDirection: "column", marginBottom: "5"}}>
-            <h2 style={{color: "blue"}}>Past Exam</h2>
-            <Grid>
-            <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {exams.map((value) => (
-                    <ListItem
-                    key={value.name}
-                    disableGutters
-                    >
-                    <ListItemText>
-                        <strong>{value.name}</strong>
-                        <Typography>{value.desc}</Typography>
-                        <Typography>Strat Date: {value.start}</Typography>
-                        <Typography>End Date: {value.end}</Typography>
-                    </ListItemText>
-                    </ListItem>
-                ))}
-                </List>
-            </Grid>
-            </Grid>
-            <Grid item rowSpacing={45}></Grid>
             </Grid>
         </Box>
     );

@@ -6,6 +6,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import theme from "../utils/theme";
 import createEmotionCache from "../utils/createEmotionCache";
+import Header from "../components/Header";
 import { Container } from "@mui/material";
 
 const clientSideEmotionCache = createEmotionCache();
@@ -23,6 +24,7 @@ export default function MyApp(props) {
 			</Head>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
+				<Header />
 				<Container
 					sx={{
 						display: "flex",

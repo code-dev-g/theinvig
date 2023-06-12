@@ -14,147 +14,150 @@ import { signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "fir
 import { useFormik } from "formik";
 import { doc, getDoc } from "firebase/firestore";
 
+import { API_URL } from '../../api';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
-export default function SignInSide() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+export default function SignInSide () {
+    const handleSubmit = ( event ) => {
+        event.preventDefault();
+        const data = new FormData( event.currentTarget );
+        console.log( {
+            email: data.get( 'email' ),
+            password: data.get( 'password' ),
+        } );
+    };
 
-  const formik = useFormik( {
-    initialValues: {
-        email: "",
-        password: "",
-        type: "faculty",
-    },
-    validationSchema: Yup.object( {
-        email: Yup.string()
-            .email( "Invalid email address" )
-            .required( "Email address is required" ),
-        password: Yup.string()
-            .min( 6, "Password must be at least 6 characters" )
-            .required( "Password is required" ),
-        type: Yup.string().required(),
-    } ),
-    onSubmit: async ( values, { setSubmitting, setFieldError } ) => {
-        const { email, password, type } = values;
-        
-        console.log( type );
+    const formik = useFormik( {
+        initialValues: {
+            email: "",
+            password: "",
+            type: "faculty",
+        },
+        validationSchema: Yup.object( {
+            email: Yup.string()
+                .email( "Invalid email address" )
+                .required( "Email address is required" ),
+            password: Yup.string()
+                .min( 6, "Password must be at least 6 characters" )
+                .required( "Password is required" ),
+            type: Yup.string().required(),
+        } ),
+        onSubmit: async ( values, { setSubmitting, setFieldError } ) => {
+            const { email, password, type } = values;
 
-        try {
-            await signInWithEmailAndPassword( authHandle, email, password );
+            console.log( type );
 
-            const user = authHandle.currentUser;
+            try {
+                alert("Here")
 
-            const docRef = doc(storeHandle, "usertype", user.uid);
-            const docSnap = await getDoc(docRef);
+                await signInWithEmailAndPassword( authHandle, email, password );
 
-            if (docSnap.exists()) {
-                console.log( "Document data:", docSnap.data() );
-                if ( docSnap.data().type === type ) {
-                    if ( type === "faculty" ) {
-                        router.push( '/faculty' );
+                const user = authHandle.currentUser;
+
+                const docRef = doc( storeHandle, "usertype", user.uid );
+                const docSnap = await getDoc( docRef );
+
+                if ( docSnap.exists() ) {
+                    console.log( "Document data:", docSnap.data() );
+                    if ( docSnap.data().type === type ) {
+                        if ( type === "faculty" ) {
+                            router.push( '/faculty/' );
+                        }
                     }
+                    else {
+                        signOut( authHandle );
+                        alert( "You are not authorized to access this page" );
+                    }
+                } else {
+                    // docSnap.data() will be undefined in this case
+                    console.log( "No such document!" );
                 }
-                else {
-                    signOut( authHandle );
-                    alert( "You are not authorized to access this page" );
-                }
-            } else {
-            // docSnap.data() will be undefined in this case
-                console.log("No such document!");
+
+                router.push('/');
+            } catch ( error ) {
+                console.error( error );
+                setFieldError( "email", error.message );
             }
 
-            // router.push('/');
-        } catch ( error ) {
-            console.error( error );
-            setFieldError( "email", error.message );
-        }
+            setSubmitting( false );
+        },
+    } );
 
-        setSubmitting( false );
-    },
-} );
-
-  return (
-    <ThemeProvider theme={defaultTheme}>
-      <Grid container component="main" sx={{ height: '91vh',width: '213vh'}}>
-        <CssBaseline />
-        <Grid
-          item
-          xs={false}
-          sm={4}
-          md={5}
-          sx={{
-            backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
-            backgroundRepeat: 'no-repeat',
-            backgroundColor: (t) =>
-              t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <Grid item xs={12} sm={8} md={7} component={Paper} elevation={3} square>
-        <Box>
-            <form onSubmit={ formik.handleSubmit } style={ { display: "flex", flexDirection: "column", alignItems: "center"} }>
-                <Typography variant="h3" style={ { marginTop: "160px",marginBottom: "16px"} }>Sign In</Typography>
-                <TextField
-                    id="email"
-                    name="email"
-                    label="Email address"
-                    variant="outlined"
-                    style={ { marginBottom: "18px",width: "300px"} }
-                    value={ formik.values.email }
-                    onChange={ formik.handleChange }
-                    onBlur={ formik.handleBlur }
-                    error={ formik.touched.email && Boolean( formik.errors.email ) }
-                    helperText={ formik.touched.email && formik.errors.email }
-                />
-                <TextField
-                    id="password"
-                    name="password"
-                    label="Password"
-                    type="password"
-                    variant="outlined"
-                    style={ { marginBottom: "18px",width: "300px"} }
-                    value={ formik.values.password }
-                    onChange={ formik.handleChange }
-                    onBlur={ formik.handleBlur }
-                    error={ formik.touched.password && Boolean( formik.errors.password ) }
-                    helperText={ formik.touched.password && formik.errors.password }
-                />
-                
-                <Button
-                    type="submit"
-                    variant="contained"
-                    color="primary"
-                    style={ { marginBottom: "18px"}}
-                    disabled={ formik.isSubmitting }
-                >
-                    Sign In
-                </Button>
-                <Button
-                    type="button"
-                    variant="outlined"
-                    color="secondary"
-                    style={ { marginBottom: "18px",width: "300px"}}
-                    onClick={ () => {
-                        router.push( '/forgotpassword' );
+    return (
+        <ThemeProvider theme={ defaultTheme }>
+            <Grid container component="main" sx={ { height: '91vh', width: '213vh' } }>
+                <CssBaseline />
+                <Grid
+                    item
+                    xs={ false }
+                    sm={ 4 }
+                    md={ 5 }
+                    sx={ {
+                        backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+                        backgroundRepeat: 'no-repeat',
+                        backgroundColor: ( t ) =>
+                            t.palette.mode === 'light' ? t.palette.grey[ 50 ] : t.palette.grey[ 900 ],
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
                     } }
-                >
-                    Forgot password?
-                </Button>
-            </form>
-        </Box>
-        </Grid>
-      </Grid>
-    </ThemeProvider>
-  );
+                />
+                <Grid item xs={ 12 } sm={ 8 } md={ 7 } component={ Paper } elevation={ 3 } square>
+                    <Box>
+                        <form onSubmit={ formik.handleSubmit } style={ { display: "flex", flexDirection: "column", alignItems: "center" } }>
+                            <Typography variant="h3" style={ { marginTop: "160px", marginBottom: "16px" } }>Sign In</Typography>
+                            <TextField
+                                id="email"
+                                name="email"
+                                label="Email address"
+                                variant="outlined"
+                                style={ { marginBottom: "18px", width: "300px" } }
+                                value={ formik.values.email }
+                                onChange={ formik.handleChange }
+                                onBlur={ formik.handleBlur }
+                                error={ formik.touched.email && Boolean( formik.errors.email ) }
+                                helperText={ formik.touched.email && formik.errors.email }
+                            />
+                            <TextField
+                                id="password"
+                                name="password"
+                                label="Password"
+                                type="password"
+                                variant="outlined"
+                                style={ { marginBottom: "18px", width: "300px" } }
+                                value={ formik.values.password }
+                                onChange={ formik.handleChange }
+                                onBlur={ formik.handleBlur }
+                                error={ formik.touched.password && Boolean( formik.errors.password ) }
+                                helperText={ formik.touched.password && formik.errors.password }
+                            />
+
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                style={ { marginBottom: "18px" } }
+                                disabled={ formik.isSubmitting }
+                            >
+                                Sign In
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outlined"
+                                color="secondary"
+                                style={ { marginBottom: "18px", width: "300px" } }
+                                onClick={ () => {
+                                    router.push( '/forgotpassword' );
+                                } }
+                            >
+                                Forgot password?
+                            </Button>
+                        </form>
+                    </Box>
+                </Grid>
+            </Grid>
+        </ThemeProvider>
+    );
 }

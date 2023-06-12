@@ -14,12 +14,14 @@ import { signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "fir
 import { useFormik } from "formik";
 import { doc, getDoc } from "firebase/firestore";
 
+import { useRouter } from 'next/router';
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
 const defaultTheme = createTheme();
 
-export default function SignInSide() {
+export default function SignInSide () {
+  const router = useRouter();
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -52,26 +54,8 @@ export default function SignInSide() {
         try {
             await signInWithEmailAndPassword( authHandle, email, password );
 
-            const user = authHandle.currentUser;
-
-            const docRef = doc(storeHandle, "usertype", user.uid);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                console.log( "Document data:", docSnap.data() );
-                if ( docSnap.data().type === type ) {
-                        router.push( '/faculty' );
-                }
-                else {
-                    signOut( authHandle );
-                    alert( "You are not authorized to access this page" );
-                }
-            } else {
-            // docSnap.data() will be undefined in this case
-                console.log("No such document!");
-            }
-
-            // router.push('/');
+          router.push( '/faculty' );
+          
         } catch ( error ) {
             console.error( error );
             setFieldError( "email", error.message );

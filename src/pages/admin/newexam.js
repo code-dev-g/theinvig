@@ -1,4 +1,4 @@
-import { React,useState } from "react";
+import { React,useState,useEffect } from "react";
 import { useRouter } from 'next/router'
 import {Box,Grid,Paper,Typography, Button, Stack,List,TextField} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
@@ -11,23 +11,12 @@ import ListItemText from '@mui/material/ListItemText';
 import Link from 'next/link';
 
 export default function schedule() {
-    const router = useRouter();
-    const data = router.query;
-    
-        const [ user ] = useAuthState( authHandle );
-    console.log(user)
-    if ( user == null ) { 
-        return (
-            <Box>
-                <h1>Please login first</h1>
-            </Box>
-        );
-    }
-    console.log( user.uid );
+    const [user] = useAuthState(authHandle);
     const [name, setName] = useState('');
     const [dep, setDep] = useState('');
     const [start, setStart] = useState('');
     const [end, setEnd] = useState('');
+    var click = false;
 
     let exam = {name: NaN, dep: NaN, start: NaN,end: NaN};
     const handleClick = () => {
@@ -35,8 +24,45 @@ export default function schedule() {
         exam.dep = dep
         exam.start = start
         exam.end = end
+        click = true;
         return exam
     };
+    
+    useEffect(() => {
+        const callAPI = async () => {
+            try {
+              const response = await fetch('https://invig-api-m1-2xe7e.ondigitalocean.app/exam/', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(exam), // Replace with your payload
+              });
+          
+              if (response.ok) {
+                const data = await response.json();
+                console.log('Response:', data);
+              } else {
+                console.error('Request failed:', response.status, response.statusText);
+              }
+            } catch (error) {
+              console.error('Request error:', error);
+            }
+          };
+            
+    
+        if (click) {
+            callAPI();
+          }
+      }, [exam]);
+    
+      if (user == null) {
+        return (
+          <Box>
+            <h1>Please login first</h1>
+          </Box>
+        );
+      }
   
     const handleNameChange = (event) => {
         setName(event.target.value);

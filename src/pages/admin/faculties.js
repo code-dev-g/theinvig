@@ -1,6 +1,6 @@
-import { React,useState } from "react";
+import { React,useState,useEffect } from "react";
 import { useRouter } from 'next/router'
-import {Box,Grid,Paper,Typography, Button, Stack,List,TextField} from "@mui/material";
+import {Box,Grid,Paper,Typography, Button, Stack,List,TextField, Avatar} from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { useAuthState } from "react-firebase-hooks/auth";
 import { authHandle } from "../../utils/firebase";
@@ -11,102 +11,71 @@ import ListItemText from '@mui/material/ListItemText';
 import Link from 'next/link';
 
 export default function schedule() {
-    const router = useRouter();
-    const data = router.query;
-    
-        const [ user ] = useAuthState( authHandle );
-    console.log(user)
-    if ( user == null ) { 
-        return (
-            <Box>
-                <h1>Please login first</h1>
-            </Box>
-        );
-    }
-    console.log( user.uid );
-    const [value, setValue] = useState('');
-
-    const handleClick = () => {
-      console.log(value);
-    };
+    const [user] = useAuthState(authHandle);
+    const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
   
-    const handleChange = (event) => {
-      setValue(event.target.value);
-    };
-    const faculties = [
-        {
-            name: "Dharshita",
-            email: "dharshita@topper.com",
-        },
-        {
-            name: "Dharshita",
-            email: "dharshita@topper.com",
-        },
-        {
-            name: "Dharshita",
-            email: "dharshita@topper.com",
-        },
-        {
-            name: "Dharshita",
-            email: "dharshita@topper.com",
-        },
-    ];
-
+    useEffect(() => {
+      const callAPI = async () => {
+        try {
+          const res = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/faculty/`, {
+            method: 'GET',
+          });
+          const responseData = await res.json();
+          setData(responseData);
+        } catch (err) {
+          setError(err);
+        }
+      };
+  
+      if (user) {
+        callAPI();
+      }
+    }, [user]);
+  
+    if (user == null) {
+      return (
+        <Box>
+          <h1>Please login first</h1>
+        </Box>
+      );
+    }
+  
+    if (error) {
+      return (
+        <Box>
+          <h1>Caught an error: {error.message}</h1>
+        </Box>
+      );
+    }
+  
+    if (!data) {
+      return (
+        <Box>
+          <h1>Loading...</h1>
+        </Box>
+      );
+    }
     return (
         <Box sx={{width: "200vh"}}>
             <Typography variant="h3" sx={{fontWeight: "bold" ,margin: "3rem 0rem", }}>Faculties</Typography>
             <Grid container spacing={3}>
-            <Grid item xs={12} component={Paper} style={ {paddingBottom: "20px", display: "flex", flexDirection: "row", alignItems: "baseline", marginBottom: "5"}}>
-            <Grid
-            container
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            >
-                    <Grid item >
-                        
-                    <Grid container direction="row" justifyContent="flex-start" alignItems="center">
-
-                    <Grid item>
-                    <TextField
-                    id="filled-search"
-                    value={value} 
-                    onChange={handleChange}
-                    label="Search field"
-                    type="search"
-                    sx={{ width: "1000px"}}
-                    variant="filled"
-                    />
-                    </Grid>
-                    <Grid item>
-                    <Button variant="contained" onClick={handleClick}>Search</Button>
-                    </Grid>
-                    </Grid>
-                    </Grid>
-                    <Grid item sx={{margin: 5}}>
-                        <Button variant="contained" onClick={console.log("Add Faculty")}>Add</Button>
-                    </Grid>
-            </Grid>
-            </Grid>
             <Grid item xs={12} component={Paper} sx={{paddingBottom: "20px",width: '100%', maxWidth: 360, bgcolor: 'background.paper',marginBottom: "180px" }}>
             <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-            {faculties.map((value) => (
+            {data.map((value) => (
                     <ListItem
                     key={value.name}
                     disableGutters
                     >
-                        <Link
-                href={{
-                    pathname: '/admin/facultydetails',
-                    query: value 
-                }}
-                ><a style={{textDecoration: "none",color:"black"}}>
+
                     <ListItemText>
-                        <strong>{value.name}</strong>
-                        <Typography>{value.email}</Typography>
+                        <Avatar src={`${value.facultyImageURL}`}></Avatar>
+                        <strong>{value.facultyName}</strong>
+                        <Typography>{value.facultyEmail}</Typography>
+                        <Typography>{value.facultyPhoneNumber}</Typography>
+                        <Typography>{value.department}</Typography>
                     </ListItemText>
-                    </a>
-                    </Link>
+                    
                     </ListItem>
                 ))}
                 </List>

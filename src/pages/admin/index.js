@@ -102,30 +102,18 @@ const Dashboard = () => {
                 </Stack>
             </Stack>
           <Stack spacing={3} direction="row">
-          <Link
-                href={{
-                    pathname: "admin/faculties",
-                    query: user 
-                }}
-                >
-                <a><Button
+              <Button
                         type="button"
                         href="admin/faculties"
                         variant="contained"
                         color="primary"
-                        style={ { marginBottom: "18px"}}
+                        style={{ marginBottom: "18px"}}
                         
                     >
                         View Faculty
-                    </Button></a></Link>
+                    </Button>
                 
-                    <Link
-                    href={{
-                        pathname: "admin/newexam",
-                        query: user 
-                    }}
-                    >
-                    <a><Button
+                    <Button
                             type="button"
                             href="admin/newexam"
                             variant="contained"
@@ -134,7 +122,7 @@ const Dashboard = () => {
                             
                         >
                             Upload Time Table
-                        </Button></a></Link>
+                        </Button>
           </Stack>
         </Grid>
         <Grid item rowSpacing={45}></Grid>

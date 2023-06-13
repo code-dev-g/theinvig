@@ -13,7 +13,7 @@ function Menu () {
 
 
 	try { 
-		const docSnap = null;
+		var docSnap = null;
 		(async () => {
 			const docRef = doc(storeHandle, "usertype", user.uid);
 			docSnap = await getDoc(docRef);

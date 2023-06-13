@@ -1,94 +1,91 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { React } from "react";
+import { React, useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import { Box, Grid, Paper, Typography, Button, Stack } from "@mui/material";
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import { CardActionArea } from '@mui/material';
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { authHandle } from "../../utils/firebase";
-
-import ListItemText from '@mui/material/ListItemText';
-import ListItem from '@mui/material/ListItem';
 import { API_URL } from "../../../api";
 
-export default function schedule () {
-    const router = useRouter();
-    const data = router.query;
+export default function Schedule() {
+  const [user] = useAuthState(authHandle);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
 
-    const [ user ] = useAuthState( authHandle );
-    console.log( user );
-    if ( user == null ) {
-        return (
-            <Box>
-                <h1>Please login first</h1>
-            </Box>
-        );
-    }
-    console.log( user.email );
+  useEffect(() => {
     const callAPI = async () => {
-        try {
-            const res = await fetch(
-                `http://${API_URL}/admin`,
-                {
-                    method: 'GET',
-                }
-            );
-            const data = await res.json();
-            console.log(data);
-        } catch (err) {
-            console.log(err);
-        }
+      try {
+        const email = user.email.replace('@', '%40');
+        const res = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/admin/?adminEmail=${email}`, {
+          method: 'GET',
+        });
+        const responseData = await res.json();
+        setData(responseData);
+      } catch (err) {
+        setError(err);
+      }
     };
-    callAPI();
-    // const data = {name: "Charles",mail: "test@gmail.com"};
+
+    if (user) {
+      callAPI();
+    }
+  }, [user]);
+
+  if (user == null) {
     return (
-        <Box sx={ { width: "200vh" } }>
-            <h1>Admin Profile</h1>
-            <Grid container spacing={ 3 }>
-                <Grid item xs={ 12 } style={ { display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "15" } }>
-                    <img
-                        height="300px"
-                        width={ 'auto' }
-                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Charles-Leclerc.jpg/330px-Charles-Leclerc.jpg"
-                        alt={ data.name }
-                    />
-                    <Typography gutterBottom variant="h5" component="div">
-                        { user.email }
-                    </Typography>
-                </Grid>
-                <Grid item xs={ 12 } component={ Paper } spacing={ 2 } style={ { display: "flex", flexDirection: "column", alignItems: "unset", marginBottom: "15" } }>
-
-                    <Typography gutterBottom variant="h6" component="div">
-                        Email:
-                        <Typography component="div">
-                            { data.mail }
-                        </Typography>
-                    </Typography>
-
-                    <Typography gutterBottom variant="h6" component="div">
-                        Email:
-                        <Typography component="div">
-                            { data.mail }
-                        </Typography>
-                    </Typography>
-
-                    <Typography gutterBottom variant="h6" component="div">
-                        Email:
-                        <Typography component="div">
-                            { data.mail }
-                        </Typography>
-                    </Typography>
-
-                    <Typography gutterBottom variant="h6" component="div">
-                        Email:
-                        <Typography component="div">
-                            { data.mail }
-                        </Typography>
-                    </Typography>
-                </Grid>
-            </Grid>
-        </Box>
+      <Box>
+        <h1>Please login first</h1>
+      </Box>
     );
-};
+  }
+
+  if (error) {
+    return (
+      <Box>
+        <h1>Caught an error: {error.message}</h1>
+      </Box>
+    );
+  }
+
+  if (!data) {
+    return (
+      <Box>
+        <h1>Loading...</h1>
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ width: "200vh" }}>
+      <h1>Admin Profile</h1>
+      <Grid container spacing={3}>
+                <Grid container spacing={ 3 }>
+                    <Grid item xs={ 12 } style={ { display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "15" } }>
+                        <img
+                            height="300px"
+                            width={ 'auto' }
+                            src={`${data.adminImageURL}`}
+                            alt={ data.adminName }
+                        />
+                        <Typography gutterBottom variant="h5" component="div">
+                            { data.adminName }
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={ 12 } component={ Paper } spacing={ 2 } style={ { display: "flex", flexDirection: "column", alignItems: "unset", marginBottom: "15" } }>
+    
+                        <Typography gutterBottom variant="h6" component="div">
+                            Email:
+                            <Typography component="div">
+                                { data.adminEmail }
+                            </Typography>
+                        </Typography>
+    
+                        <Typography gutterBottom variant="h6" component="div">
+                            Phone:
+                            <Typography component="div">
+                                { data.adminPhoneNumber }
+                            </Typography>
+                        </Typography>
+                    </Grid>
+                </Grid>
+                </Grid>
+            </Box>
+)};

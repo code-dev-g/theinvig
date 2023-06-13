@@ -1,59 +1,87 @@
-import React from "react";
-import {Box,List,Grid, Paper,Typography, Button, Stack} from "@mui/material";
+import { React, useState, useEffect } from "react";
+import { Box, List, ListItem, ListItemText, Grid, Paper, Typography, Button, Stack, Avatar } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { authHandle } from "../../utils/firebase";
-
-
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import { Router } from 'next/router';
-
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 
+const Dashboard = () => {
+  const [user] = useAuthState(authHandle);
+  const [data, setData] = useState(null);
+  const [exams, setExams] = useState(null);
+  const [error, setError] = useState(null);
+  const router = useRouter();
 
-const Dashboard = () => { 
-    const [ user ] = useAuthState( authHandle );
-    console.log(user)
-    if ( user == null ) { 
-        return (
-            <Box>
-                <h1>Please login first</h1>
-            </Box>
-        );
+  useEffect(() => {
+    const callAPI = async () => {
+      try {
+        const email = user.email.replace('@', '%40');
+        const res = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/admin/?adminEmail=${email}`, {
+          method: 'GET',
+        });
+        const exam = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/exam/`, {
+          method: 'GET',
+        });
+        const responseData = await res.json();
+        setData(responseData);
+        const responseExam = await exam.json();
+        setExams(responseExam);
+      } catch (err) {
+        setError(err);
+      }
+    };
+
+    if (user) {
+      callAPI();
     }
-    console.log( user.uid );
-    // const user = {name:"Dharshita"}
-    const exams = [{
-                    name: "Midterm",
-                    desc: "This is a midterm exam",
-                    start:  Date(10-6-2023).substring(0,15),
-                    end: Date(1-7-2023).substring(0,15),
-                },
-                {
-                    name: "Midterm",
-                    desc: "This is a midterm exam",
-                    start:  Date(10-6-2023).substring(0,15),
-                    end: Date(1-7-2023).substring(0,15),
-                },
-                {
-                    name: "Midterm",
-                    desc: "This is a midterm exam",
-                    start:  Date(10-6-2023).substring(0,15),
-                    end: Date(1-7-2023).substring(0,15),
-                },
-        ];
+  }, [user]);
 
-
-
+  if (user == null) {
     return (
-        <Box sx={{width: "200vh"}}>
-            <Typography variant="h3" sx={{fontWeight: "bold" ,margin: "2rem 0rem", }}>Admin Dashboard</Typography>
-            <Grid container spacing={3}>
-            <Grid item xs={12} component={Paper} style={ { display: "flex", flexDirection: "column", alignItems: "start", marginBottom: "5"} }>
-            <h1>Hello! {user.displayName}</h1>
-            <Stack spacing={15} style={{marginBottom: '18px'}} direction="row" >
-                <Stack>
+      <Box>
+        <h1>Please login first</h1>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box>
+        <h1>Caught an error: {error.message}</h1>
+      </Box>
+    );
+  }
+
+  if (!data || !exams) {
+    return (
+      <Box>
+        <h1>Loading...</h1>
+      </Box>
+    );
+  }
+
+  return (
+    <Box sx={{ width: "200vh" }}>
+      <Grid
+        container
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Grid item>
+          <Typography variant="h3" sx={{ fontWeight: "bold", margin: "2rem 0rem" }}>Admin Dashboard</Typography>
+        </Grid>
+        <Grid item>
+          <Link href="/admin/profile">
+            <Avatar alt="Remy Sharp" src={`${data.facultyImageURL}`} />
+          </Link>
+        </Grid>
+      </Grid>
+      <Grid container spacing={3}>
+        <Grid item xs={12} component={Paper} style={{ display: "flex", flexDirection: "column", alignItems: "start", marginBottom: "5" }}>
+          <h1>Hello! {data.adminName}</h1>
+          <Stack spacing={15} style={{ marginBottom: '18px' }} direction="row" >
+          <Stack>
                 <Typography variant="h6">20</Typography>
                 <Typography variant="caption">Total Faculties</Typography>
                 </Stack>
@@ -73,8 +101,8 @@ const Dashboard = () => {
                 <Typography variant="caption">Pending</Typography>
                 </Stack>
             </Stack>
-            <Stack spacing={3} direction="row">
-            <Link
+          <Stack spacing={3} direction="row">
+          <Link
                 href={{
                     pathname: "admin/faculties",
                     query: user 
@@ -107,42 +135,33 @@ const Dashboard = () => {
                         >
                             Upload Time Table
                         </Button></a></Link>
-                </Stack>
-            </Grid>
-            <Grid item rowSpacing={45}></Grid>
-            <Grid item xs={12} component={Paper} style={ { display: "flex", flexDirection: "column", alignItems: "unset", marginBottom: "5"}}>
-            <h2>Schedules</h2>
-            <Grid>
+          </Stack>
+        </Grid>
+        <Grid item rowSpacing={45}></Grid>
+        <Grid item xs={12} component={Paper} style={{ display: "flex", flexDirection: "column", alignItems: "unset", marginBottom: "5" }}>
+          <h2>Schedules</h2>
+          <Grid>
             <Stack></Stack>
             <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {exams.map((value) => (
-                    <ListItem
-                    key={value.name}
-                    disableGutters
-                    >
-                        <Link
-                href={{
-                    pathname: '/faculty/slotselection',
-                    query: value 
-                }}
-                ><a style={{textDecoration: "none",color:"black"}}>
-                    <ListItemText>
-                        <strong>{value.name}</strong>
-                        <Typography>{value.desc}</Typography>
-                        <Typography>Strat Date: {value.start}</Typography>
-                        <Typography>End Date: {value.end}</Typography>
-                    </ListItemText>
-                    </a>
-                    </Link>
-                    </ListItem>
-                ))}
-                </List>
-            </Grid>
-            </Grid>
-            <Grid item rowSpacing={45}></Grid>
-            </Grid>
-        </Box>
-    );
+              {exams.map((value) => (
+                <ListItem key={value.name} disableGutters>
+                  
+                      <ListItemText>
+                        <strong>{value.examName}</strong>
+                        <Typography>{value.department}</Typography>
+                        <Typography>Start Date: {value.startDate}</Typography>
+                        <Typography>End Date: {value.endDate}</Typography>
+                      </ListItemText>
+                      
+                </ListItem>
+              ))}
+            </List>
+          </Grid>
+        </Grid>
+        <Grid item rowSpacing={45}></Grid>
+      </Grid>
+    </Box>
+  );
 };
 
 export default Dashboard;

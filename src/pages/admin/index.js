@@ -9,8 +9,9 @@ const Dashboard = () => {
   const [user] = useAuthState(authHandle);
   const [data, setData] = useState(null);
   const [exams, setExams] = useState(null);
+  const [faculty, setFaculty] = useState(null);
+  const [gencount, setCount] = useState(null);
   const [error, setError] = useState(null);
-  const router = useRouter();
 
   useEffect(() => {
     const callAPI = async () => {
@@ -22,16 +23,30 @@ const Dashboard = () => {
         const exam = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/exam/`, {
           method: 'GET',
         });
+        const fac = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/faculty/`, {
+          method: 'GET',
+        });
         const responseData = await res.json();
         setData(responseData);
         const responseExam = await exam.json();
         setExams(responseExam);
+        const responseFac = await fac.json();
+        setFaculty(responseFac);
+        var count = 0;
+        for (let index = 0; index < exam.length; index++) {
+          const element = exam[index];
+          if (Date(element.deadline) < Date()) {
+            count++;
+          }
+        }
+        setCount(count)
       } catch (err) {
         setError(err);
       }
     };
 
     if (user) {
+      setCount(0)
       callAPI();
     }
   }, [user]);
@@ -52,7 +67,7 @@ const Dashboard = () => {
     );
   }
 
-  if (!data || !exams) {
+  if (!data || !exams || !faculty) {
     return (
       <Box>
         <h1>Loading...</h1>
@@ -72,9 +87,9 @@ const Dashboard = () => {
           <Typography variant="h3" sx={{ fontWeight: "bold", margin: "2rem 0rem" }}>Admin Dashboard</Typography>
         </Grid>
         <Grid item>
-          <Link href="/admin/profile">
-            <Avatar alt="Remy Sharp" src={`${data.facultyImageURL}`} />
-          </Link>
+          <a href="/admin/profile">
+          <Avatar alt="Remy Sharp" src={`${data.adminImageURL}`} />
+          </a>
         </Grid>
       </Grid>
       <Grid container spacing={3}>
@@ -82,22 +97,22 @@ const Dashboard = () => {
           <h1>Hello! {data.adminName}</h1>
           <Stack spacing={15} style={{ marginBottom: '18px' }} direction="row" >
           <Stack>
-                <Typography variant="h6">20</Typography>
+                <Typography variant="h6">{faculty.length}</Typography>
                 <Typography variant="caption">Total Faculties</Typography>
                 </Stack>
 
                 <Stack>
-                <Typography variant="h6">16</Typography>
+                <Typography variant="h6">{exams.length}</Typography>
                 <Typography variant="caption">Schedules</Typography>
                 </Stack>
 
                 <Stack>
-                <Typography variant="h6">10</Typography>
+                <Typography variant="h6">{gencount}</Typography>
                 <Typography variant="caption">Generated</Typography>
                 </Stack>
 
                 <Stack>
-                <Typography variant="h6">4</Typography>
+                <Typography variant="h6">{exams.length - gencount}</Typography>
                 <Typography variant="caption">Pending</Typography>
                 </Stack>
             </Stack>

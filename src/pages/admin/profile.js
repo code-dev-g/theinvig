@@ -13,19 +13,19 @@ import ListItem from '@mui/material/ListItem';
 
 export default function schedule() {
     const router = useRouter();
-    // const data = router.query;
+    const data = router.query;
     
-    //     const [ user ] = useAuthState( authHandle );
-    // console.log(user)
-    // if ( user == null ) { 
-    //     return (
-    //         <Box>
-    //             <h1>Please login first</h1>
-    //         </Box>
-    //     );
-    // }
-    // console.log( user.uid );
-    const data = {name: "Charles",mail: "test@gmail.com"};
+        const [ user ] = useAuthState( authHandle );
+    console.log(user)
+    if ( user == null ) { 
+        return (
+            <Box>
+                <h1>Please login first</h1>
+            </Box>
+        );
+    }
+    console.log( user.uid );
+    // const data = {name: "Charles",mail: "test@gmail.com"};
     return (
         <Box sx={{width: "200vh"}}>
             <h1>Admin Profile</h1>

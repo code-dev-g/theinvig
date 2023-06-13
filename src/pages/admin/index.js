@@ -13,17 +13,17 @@ import Link from 'next/link';
 
 
 const Dashboard = () => { 
-    //const [ user ] = useAuthState( authHandle );
-    // console.log(user)
-    // if ( user == null ) { 
-    //     return (
-    //         <Box>
-    //             <h1>Please login first</h1>
-    //         </Box>
-    //     );
-    // }
-    // console.log( user.uid );
-    const user = {name:"Dharshita"}
+    const [ user ] = useAuthState( authHandle );
+    console.log(user)
+    if ( user == null ) { 
+        return (
+            <Box>
+                <h1>Please login first</h1>
+            </Box>
+        );
+    }
+    console.log( user.uid );
+    // const user = {name:"Dharshita"}
     const exams = [{
                     name: "Midterm",
                     desc: "This is a midterm exam",
@@ -51,7 +51,7 @@ const Dashboard = () => {
             <Typography variant="h3" sx={{fontWeight: "bold" ,margin: "2rem 0rem", }}>Admin Dashboard</Typography>
             <Grid container spacing={3}>
             <Grid item xs={12} component={Paper} style={ { display: "flex", flexDirection: "column", alignItems: "start", marginBottom: "5"} }>
-            <h1>Hello! {user.name}</h1>
+            <h1>Hello! {user.displayName}</h1>
             <Stack spacing={15} style={{marginBottom: '18px'}} direction="row" >
                 <Stack>
                 <Typography variant="h6">20</Typography>

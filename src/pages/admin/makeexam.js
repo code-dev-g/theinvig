@@ -14,16 +14,16 @@ export default function schedule() {
     const router = useRouter();
     const data = router.query;
     
-        //const [ user ] = useAuthState( authHandle );
-    // console.log(user)
-    // if ( user == null ) { 
-    //     return (
-    //         <Box>
-    //             <h1>Please login first</h1>
-    //         </Box>
-    //     );
-    // }
-    // console.log( user.uid );
+        const [ user ] = useAuthState( authHandle );
+    console.log(user)
+    if ( user == null ) { 
+        return (
+            <Box>
+                <h1>Please login first</h1>
+            </Box>
+        );
+    }
+    console.log( user.uid );
     const [name, setName] = useState('');
     const [code, setDep] = useState('');
     const [fac, setFaculty] = useState('');

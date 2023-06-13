@@ -19,16 +19,16 @@ export default function schedule() {
         console.log("Delete",data.name);
       };
 
-    //     const [ user ] = useAuthState( authHandle );
-    // console.log(user)
-    // if ( user == null ) { 
-    //     return (
-    //         <Box>
-    //             <h1>Please login first</h1>
-    //         </Box>
-    //     );
-    // }
-    // console.log( user.uid );
+        const [ user ] = useAuthState( authHandle );
+    console.log(user)
+    if ( user == null ) { 
+        return (
+            <Box>
+                <h1>Please login first</h1>
+            </Box>
+        );
+    }
+    console.log( user.uid );
     return (
         <Box sx={{width: "200vh"}}>
             <h1>Faculty Details</h1>

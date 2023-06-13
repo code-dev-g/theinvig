@@ -1,5 +1,5 @@
 import React from "react";
-import {Box,List,Grid, Paper,Typography, Button, Stack} from "@mui/material";
+import {Box,List,Grid, Paper,Typography, Button, Stack,Avatar} from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { authHandle } from "../../utils/firebase";
 
@@ -13,17 +13,17 @@ import Link from 'next/link';
 
 
 const Dashboard = () => { 
-    //const [ user ] = useAuthState( authHandle );
-    // console.log(user)
-    // if ( user == null ) { 
-    //     return (
-    //         <Box>
-    //             <h1>Please login first</h1>
-    //         </Box>
-    //     );
-    // }
-    // console.log( user.uid );
-    const user = {name:"Dharshita"}
+    const [ user ] = useAuthState( authHandle );
+    console.log(user)
+    if ( user == null ) { 
+        return (
+            <Box>
+                <h1>Please login first</h1>
+            </Box>
+        );
+    }
+    console.log( user.uid );
+    // const user = {name:"Dharshita"}
     const exams = [{
                     name: "Midterm",
                     desc: "This is a midterm exam",
@@ -48,7 +48,21 @@ const Dashboard = () => {
 
     return (
         <Box sx={{width: "200vh"}}>
-            <Typography variant="h3" sx={{fontWeight: "bold" ,margin: "2rem 0rem", }}>Faculty Dashboard</Typography>
+            <Grid
+            container
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            >
+            <Grid item>
+                <Typography variant="h3" sx={{fontWeight: "bold" ,margin: "2rem 0rem", }}>Faculty Dashboard</Typography>
+            </Grid>
+            <Grid item>
+            <a href="/faculty/profile">
+            <Avatar alt="Remy Sharp" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Charles-Leclerc.jpg/330px-Charles-Leclerc.jpg" />
+            </a>
+            </Grid>
+            </Grid>
             <Grid container spacing={3}>
             <Grid item xs={12} component={Paper} style={ { display: "flex", flexDirection: "column", alignItems: "start", marginBottom: "5"} }>
             <h1>Hello! {user.name}</h1>

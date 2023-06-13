@@ -12,20 +12,18 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 
 export default function schedule() {
-    const router = useRouter();
-    // const data = router.query;
     
-    //     const [ user ] = useAuthState( authHandle );
-    // console.log(user)
-    // if ( user == null ) { 
-    //     return (
-    //         <Box>
-    //             <h1>Please login first</h1>
-    //         </Box>
-    //     );
-    // }
-    // console.log( user.uid );
-    const data = {name: "Charles",mail: "test@gmail.com"};
+    const [ user ] = useAuthState( authHandle );
+    console.log(user)
+    if ( user == null ) { 
+        return (
+            <Box>
+                <h1>Please login first</h1>
+            </Box>
+        );
+    }
+    console.log( user.email );
+    // const data = {name: "Charles",mail: "test@gmail.com"};
     return (
         <Box sx={{width: "200vh"}}>
             <h1>Faculty Profile</h1>
@@ -35,10 +33,10 @@ export default function schedule() {
                 height="300px"
                 width={'auto'}
                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Charles-Leclerc.jpg/330px-Charles-Leclerc.jpg"
-                alt={data.name}
+                alt={user.displayNmae}
                 />
                 <Typography gutterBottom variant="h5" component="div">
-                    {data.name}
+                    {user.email}
                 </Typography>
             </Grid>
             <Grid item xs={12} component={Paper} spacing={2} style={ {display: "flex", flexDirection: "column", alignItems: "unset", marginBottom: "15"}}>
@@ -46,28 +44,28 @@ export default function schedule() {
             <Typography gutterBottom variant="h6" component="div">
                 Email: 
             <Typography component="div">
-                {data.mail}
+                {user.email}
             </Typography>
             </Typography>
             
             <Typography gutterBottom variant="h6" component="div">
                 Email: 
             <Typography component="div">
-                {data.mail}
+                {user.email}
             </Typography>
             </Typography>
 
             <Typography gutterBottom variant="h6" component="div">
                 Email: 
             <Typography component="div">
-                {data.mail}
+                {user.email}
             </Typography>
             </Typography>
 
             <Typography gutterBottom variant="h6" component="div">
                 Email: 
             <Typography component="div">
-                {data.mail}
+                {user.email}
             </Typography>
             </Typography>
             </Grid>

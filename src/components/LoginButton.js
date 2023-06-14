@@ -6,7 +6,7 @@ import LoginIcon from "@mui/icons-material/Login";
 function LoginButton() {
 	return (
         <Box>
-            <Link href="/signin">
+            <Link href="/">
                 <Button
                     // onClick={() => signInWithRedirect(authHandle, new GoogleAuthProvider())}
                     variant="contained"

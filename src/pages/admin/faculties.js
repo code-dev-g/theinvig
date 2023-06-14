@@ -93,7 +93,7 @@ export default function schedule() {
                           <Stack direction={'column'}>
                           <Button
                         type="button"
-                        href="faculty/myschedule"
+                        href="admin/facultydetails"
                         variant="contained"
                         color="secondary"
                         

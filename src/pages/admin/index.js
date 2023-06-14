@@ -147,15 +147,20 @@ const Dashboard = () => {
             <Stack></Stack>
             <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
               {exams.map((value) => (
-                <ListItem key={value.name} disableGutters>
-                  
+                <ListItem key={value.id} disableGutters>
+                  <Link
+                href={{
+                    pathname: '/admin/viewexam',
+                    query: {id: `${value.id}`, exam: `${value.examName}`} 
+                }}
+                ><a style={{textDecoration: "none",color:"black"}}>
                       <ListItemText>
                         <strong>{value.examName}</strong>
                         <Typography>{value.department}</Typography>
                         <Typography>Start Date: {value.startDate}</Typography>
                         <Typography>End Date: {value.endDate}</Typography>
                       </ListItemText>
-                      
+                      </a></Link>
                 </ListItem>
               ))}
             </List>

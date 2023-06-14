@@ -91,7 +91,7 @@ const Dashboard = () => {
             <Link
                 href={{
                     pathname: '/faculty/myschedule',
-                    query: user 
+                    query: {id: user.email} ,
                 }}
                 >
                 <a><Button
@@ -128,7 +128,7 @@ const Dashboard = () => {
                         <Link
                 href={{
                     pathname: '/faculty/slotselection',
-                    query: value 
+                    query: {id: value.id}
                 }}
                 ><a style={{textDecoration: "none",color:"black"}}>
                     <ListItemText>

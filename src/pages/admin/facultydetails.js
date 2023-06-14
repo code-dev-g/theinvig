@@ -63,7 +63,7 @@ export default function schedule() {
       );
     }
 
-    const deleteFaculty = async () => {
+    const deleteFaculty = async () => { //not working
         try {
             const email = data.facultyEmail.replace('@', '%40');
             const response = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/faculty/${email}`, {

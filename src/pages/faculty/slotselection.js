@@ -4,44 +4,63 @@ import {Box,Grid, Paper,Typography, Button, Stack,List} from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { authHandle } from "../../utils/firebase";
 import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
 export default function schedule() {
     const router = useRouter();
-    const data = router.query;
-    
-    const [ user ] = useAuthState( authHandle );
-    console.log(user)
-    if ( user == null ) { 
-        return (
-            <Box>
-                <h1>Please login first</h1>
-            </Box>
-        );
+    const id = router.query;
+    const [user] = useAuthState(authHandle);
+    const [data, setData] = useState(null);
+    const [exams, setExams] = useState(null);
+    const [error, setError] = useState(null);
+    useEffect(() => {
+      const callAPI = async () => {
+        try {
+            const email = await id.email.replace('@', '%40');
+            console.log(email)
+            const res = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/faculty/?facultyEmail=${email}`, {
+            method: 'GET',
+          });
+          const exam = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/exam/`, {
+          method: 'GET',
+        });
+          const responseData = await res.json();
+          setData(responseData);
+          const responseExam = await exam.json();
+        setExams(responseExam);
+        } catch (err) {
+          setError(err);
+        }
+      };
+  
+      if (user) {
+        callAPI();
+      }
+    }, [user]);
+  
+    if (user == null) {
+      return (
+        <Box>
+          <h1>Please login first</h1>
+        </Box>
+      );
     }
-    console.log( user.uid );
-
-    const subjects = [
-        {
-            name: "Maths",
-            code: "19CSE123",
-            date: Date().substring(0,15),
-            time: Date().substring(16),
-        },
-        {
-            name: "Maths",
-            code: "19CSE123",
-            date: Date().substring(0,15),
-            time: Date().substring(16),
-        },
-        {
-            name: "Maths",
-            code: "19CSE123",
-            date: Date().substring(0,15),
-            time: Date().substring(16),
-        },
-    ];
+  
+    if (error) {
+      return (
+        <Box>
+          <h1>Caught an error: {error.message}</h1>
+        </Box>
+      );
+    }
+  
+    if (!data || !exams) {
+      return (
+        <Box>
+          <h1>Loading...</h1>
+        </Box>
+      );
+    }
 
     function yes(code) {
         console.log("yes for ",{code});

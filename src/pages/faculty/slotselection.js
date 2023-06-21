@@ -1,4 +1,4 @@
-import { React } from "react";
+import { React,useEffect,useState } from "react";
 import { useRouter } from 'next/router'
 import {Box,Grid, Paper,Typography, Button, Stack,List} from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -10,24 +10,22 @@ export default function schedule() {
     const router = useRouter();
     const id = router.query;
     const [user] = useAuthState(authHandle);
-    const [data, setData] = useState(null);
     const [exams, setExams] = useState(null);
+    const [courses, setCourse] = useState(null);
     const [error, setError] = useState(null);
     useEffect(() => {
       const callAPI = async () => {
         try {
-            const email = await id.email.replace('@', '%40');
-            console.log(email)
-            const res = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/faculty/?facultyEmail=${email}`, {
-            method: 'GET',
-          });
-          const exam = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/exam/`, {
+          const exam = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/exam/?examID=${id.id}`, {
           method: 'GET',
         });
-          const responseData = await res.json();
-          setData(responseData);
-          const responseExam = await exam.json();
+          const course = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/course`, {
+          method: 'GET',
+        });
+        const responseExam = await exam.json();
         setExams(responseExam);
+        const responseCourse = await course.json();
+        setCourse(responseCourse);
         } catch (err) {
           setError(err);
         }
@@ -54,20 +52,20 @@ export default function schedule() {
       );
     }
   
-    if (!data || !exams) {
+    if (!exams || !courses) {
       return (
         <Box>
           <h1>Loading...</h1>
         </Box>
       );
     }
-
+    console.log(exams)
     function yes(code) {
         console.log("yes for ",{code});
     }
 
     function no(code) {
-        console.log("yes for ",{code});
+        console.log("no for ",{code});
     }
 
     return (
@@ -75,64 +73,43 @@ export default function schedule() {
             <Typography variant="h3" sx={{fontWeight: "bold" ,margin: "3rem 0rem", }}>Slot Selection</Typography>
             <Grid container spacing={3}>
             <Grid item xs={12} component={Paper} style={ {paddingBottom: "20px", display: "flex", flexDirection: "column", alignItems: "unset", marginBottom: "5"}}>
-            <h2>{data.name}<br/>{data.desc}</h2>
+            <h2>{exams.examName}<br/>{exams.department}</h2>
             <Stack spacing={15} direction="row" >
                 <Stack>
                     <Typography variant="caption">Number of subjects</Typography>
-                    <Typography variant="h6">10</Typography>
+                    <Typography variant="h6">{exams.numberOfCourses}</Typography>
                 </Stack>
 
                 <Stack>
                     <Typography variant="caption">Start Date</Typography>
-                    <Typography variant="h6">{data.start}</Typography>
+                    <Typography variant="h6">{exams.startDate}</Typography>
                 </Stack>
 
                 <Stack>
                     <Typography variant="caption">End Date</Typography>
-                    <Typography variant="h6">{data.end}</Typography>
+                    <Typography variant="h6">{exams.endDate}</Typography>
                 </Stack>
 
                 <Stack>
                     <Typography variant="caption">Minimum Required</Typography>
-                    <Typography variant="h6">20</Typography>
+                    <Typography variant="h6">{exams.numberOfResponses}</Typography>
                 </Stack>
                 
-                <Button
-                        type="button"
-                        href="faculty/myschedule"
-                        variant="contained"
-                        color="secondary"
-                        style={ { marginBottom: "18px"}}
-                        
-                    >
-                        Download
-                    </Button>
-                <Button
-                        type="button"
-                        href="faculty/myexams"
-                        variant="contained"
-                        color="secondary"
-                        style={ { marginBottom: "18px"}}
-                    >
-                        Submit
-                    </Button>
                 </Stack>
             </Grid>
             <Grid item></Grid>
             <Grid item xs={12} component={Paper} sx={{paddingBottom: "20px",width: '100%', maxWidth: 360, bgcolor: 'background.paper',marginBottom: "180px" }}>
             <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
-                {subjects.map((value) => (
+                {courses.map((value) => (
                     <ListItem
-                    key={value.name}
+                    key={value.courseName}
                     disableGutters
                     >
                     <ListItemText>
                         <Stack direction="row" justifyContent="space-around" alignItems="center" spacing={2}>
                         <Grid>
-                        <strong>{value.name}</strong>
-                        <Typography>{value.code}</Typography>
-                        <Typography>Date: {value.date}</Typography>
-                        <Typography>Time: {value.time}</Typography>
+                        <strong>{value.courseName}</strong>
+                        <Typography>{value.department}</Typography>
                         </Grid>
                         <Grid>
                             <Button
@@ -160,7 +137,6 @@ export default function schedule() {
                 ))}
                 </List>
             </Grid>
-            <Grid item rowSpacing={45}><Grid item></Grid></Grid>
             </Grid>
         </Box>
     );

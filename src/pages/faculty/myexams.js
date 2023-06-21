@@ -1,46 +1,60 @@
-import { React } from "react";
+import { React, useState, useEffect } from "react";
 import { useRouter } from 'next/router'
 import {Box,List,Grid, Paper,Typography, Button, Stack} from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { authHandle } from "../../utils/firebase";
-
+import Link from "next/link"
 import ListItemText from '@mui/material/ListItemText';
 import ListItem from '@mui/material/ListItem';
 
 export default function schedule() {
-    const router = useRouter();
-    const data = router.query;
-    
-        const [ user ] = useAuthState( authHandle );
-    console.log(user)
-    if ( user == null ) { 
-        return (
-            <Box>
-                <h1>Please login first</h1>
-            </Box>
-        );
+  const [user] = useAuthState(authHandle);
+  const [exams, setExams] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const callAPI = async () => {
+      try {
+        const exam = await fetch(`https://invig-api-m1-2xe7e.ondigitalocean.app/exam/`, {
+          method: 'GET',
+        });
+        const responseExam = await exam.json();
+        setExams(responseExam);
+        console.log("exams: ",responseExam);
+     } catch (err) {
+        setError(err);
+      }
+    };
+
+    if (user) {
+      callAPI();
     }
-    console.log( user.uid );
-    // const user = {name:"Dharshita"}
-    const exams = [{
-                    name: "Midterm",
-                    desc: "This is a midterm exam",
-                    start:  Date(10-6-2023),
-                    end: Date(1-7-2023),
-                },
-                {
-                    name: "Midterm",
-                    desc: "This is a midterm exam",
-                    start:  Date(10-6-2023),
-                    end: Date(1-7-2023),
-                },
-                {
-                    name: "Midterm",
-                    desc: "This is a midterm exam",
-                    start:  Date(10-6-2023),
-                    end: Date(1-7-2023),
-                },
-        ];
+  }, [user]);
+
+  if (user == null) {
+    return (
+      <Box>
+        <h1>Please login first</h1>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box>
+        <h1>Caught an error: {error.message}</h1>
+      </Box>
+    );
+  }
+
+  if (!exams) {
+    return (
+      <Box>
+        <h1>Loading...</h1>
+      </Box>
+    );
+  }
+
 
     return (
         <Box sx={{width: "200vh"}}>
@@ -50,17 +64,27 @@ export default function schedule() {
             <h2 style={{color: "green"}}>Current Exam</h2>
             <Grid>
             <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {exams.map((value) => (
+                {exams.filter((value)=>{
+                    return (Date.parse(value.startDate) < Date.now()) && (Date.parse(value.endDate) > Date.now());
+                }).map((value) => (
                     <ListItem
-                    key={value.name}
+                    key={value.id}
                     disableGutters
                     >
+                    <Link
+                href={{
+                    pathname: '/faculty/viewexam',
+                    query: value 
+                }}
+                ><a style={{textDecoration: "none",color:"black"}}>
                     <ListItemText>
-                        <strong>{value.name}</strong>
-                        <Typography>{value.desc}</Typography>
-                        <Typography>Strat Date: {value.start}</Typography>
-                        <Typography>End Date: {value.end}</Typography>
+                    <strong>{value.examName}</strong>
+                        <Typography>{value.department}</Typography>
+                        <Typography>Strat Date: {value.startDate}</Typography>
+                        <Typography>End Date: {value.endDate}</Typography>
+                        <Typography>Deadline: {value.deadline}</Typography>
                     </ListItemText>
+                    </a></Link>
                     </ListItem>
                 ))}
                 </List>
@@ -71,17 +95,27 @@ export default function schedule() {
             <h2 style={{color: "red"}}>Upcomming Exam</h2>
             <Grid>
             <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {exams.map((value) => (
+                {exams.filter((value)=>{
+                    return (Date.parse(value.startDate) > Date.now()) && (Date.parse(value.endDate) > Date.now());
+                }).map((value) => (
                     <ListItem
                     key={value.name}
                     disableGutters
                     >
+                    <Link
+                href={{
+                    pathname: '/faculty/viewexam',
+                    query: value 
+                }}
+                ><a style={{textDecoration: "none",color:"black"}}>
                     <ListItemText>
-                        <strong>{value.name}</strong>
-                        <Typography>{value.desc}</Typography>
-                        <Typography>Strat Date: {value.start}</Typography>
-                        <Typography>End Date: {value.end}</Typography>
+                    <strong>{value.examName}</strong>
+                        <Typography>{value.department}</Typography>
+                        <Typography>Strat Date: {value.startDate}</Typography>
+                        <Typography>End Date: {value.endDate}</Typography>
+                        <Typography>Deadline: {value.deadline}</Typography>
                     </ListItemText>
+                    </a></Link>
                     </ListItem>
                 ))}
                 </List>
@@ -92,17 +126,26 @@ export default function schedule() {
             <h2 style={{color: "blue"}}>Past Exam</h2>
             <Grid>
             <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                {exams.map((value) => (
+                {exams.filter((value)=>{
+                    return (Date.parse(value.startDate) < Date.now()) && (Date.parse(value.endDate) < Date.now());
+                }).map((value) => (
                     <ListItem
                     key={value.name}
                     disableGutters
-                    >
+                    ><Link
+                href={{
+                    pathname: '/faculty/viewexam',
+                    query: value
+                }}
+                ><a style={{textDecoration: "none",color:"black"}}>
                     <ListItemText>
-                        <strong>{value.name}</strong>
-                        <Typography>{value.desc}</Typography>
-                        <Typography>Strat Date: {value.start}</Typography>
-                        <Typography>End Date: {value.end}</Typography>
+                    <strong>{value.examName}</strong>
+                        <Typography>{value.department}</Typography>
+                        <Typography>Strat Date: {value.startDate}</Typography>
+                        <Typography>End Date: {value.endDate}</Typography>
+                        <Typography>Deadline: {value.deadline}</Typography>
                     </ListItemText>
+                    </a></Link>
                     </ListItem>
                 ))}
                 </List>
